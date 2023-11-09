@@ -7,6 +7,7 @@ import {RpcException} from '@nestjs/microservices';
 import {VehicleEntity} from '../../vehicle/entities/vehicle.entity';
 import {User} from '../../interfaces/user.interface';
 import {UserInfo} from '../../interfaces/userinfo.interface';
+import {Customer} from "../../customer/entities/customer.entity";
 
 @Injectable()
 export class MaintenanceService {
@@ -38,6 +39,7 @@ export class MaintenanceService {
                         include: [
                             {
                                 model: VehicleEntity,
+                                include: [Customer]
                             },
                         ],
                     },

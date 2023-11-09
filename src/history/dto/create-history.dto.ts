@@ -3,7 +3,7 @@ export class CreateHistoryDto {
 
     destination?: string;
 
-    delivery_kode: string;
+    // delivery_kode: string;
 
     operator?: string;
 }

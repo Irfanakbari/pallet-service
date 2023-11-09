@@ -12,8 +12,6 @@ import {PartEntity} from '../part/entities/part.entity';
 import {HistoryopEntity} from '../historyop/entities/historyop.entity';
 import {UserInfo} from '../interfaces/userinfo.interface';
 import {Customer} from '../customer/entities/customer.entity';
-import {DeliveryEntity} from '../deliveries/entities/delivery.entity';
-import {PalletDeliveryEntity} from '../deliveries/entities/pallet-delivery.entity';
 
 @Injectable()
 export class HistoryService {
@@ -24,16 +22,12 @@ export class HistoryService {
         private palletRepo: typeof PalletEntity,
         @InjectModel(HistoryopEntity)
         private historyopRepo: typeof HistoryopEntity,
-        @InjectModel(DeliveryEntity)
-        private deliveryEntity: typeof DeliveryEntity,
-        @InjectModel(PalletDeliveryEntity)
-        private palletDeliveryEntity: typeof PalletDeliveryEntity,
     ) {
     }
 
     @Transactional()
     async create(createHistoryDto: CreateHistoryDto) {
-        const {kode, delivery_kode, operator} = createHistoryDto;
+        const {kode, operator, destination} = createHistoryDto;
 
         try {
             const pallet = await this.palletRepo.findOne({
@@ -45,7 +39,7 @@ export class HistoryService {
             if (pallet.status === 3) {
                 throw new BadRequestException('Pallet Sedang Dalam Status Maintenance');
             }
-            const delivery = await this.deliveryEntity.findByPk(delivery_kode);
+            // const delivery = await this.deliveryEntity.findByPk(delivery_kode);
 
             await pallet.update({status: 0}, {where: {kode: kode}});
             // await TempHistory.create({
@@ -54,16 +48,16 @@ export class HistoryService {
             //   operator: operator
             // });
 
-            if (pallet.part !== delivery.part) {
-                throw new BadRequestException(
-                    'Part Pada Pallet Tidak Sama Dengan Part Delivery',
-                );
-            }
+            // if (pallet.part !== delivery.part) {
+            //     throw new BadRequestException(
+            //         'Part Pada Pallet Tidak Sama Dengan Part Delivery',
+            //     );
+            // }
 
-            const history = await this.historyRepo.create({
+            await this.historyRepo.create({
                 id_pallet: kode,
                 user_out: operator,
-                destination: delivery.tujuan || null,
+                destination: destination || null,
             });
             await this.historyopRepo.create({
                 id_pallet: kode,
@@ -71,10 +65,10 @@ export class HistoryService {
                 operator: operator,
             });
 
-            return this.palletDeliveryEntity.create({
-                history_kode: history.id,
-                delivery_kode: delivery_kode,
-            });
+            // return this.palletDeliveryEntity.create({
+            //     history_kode: history.id,
+            //     delivery_kode: delivery_kode,
+            // });
         } catch (error) {
             throw new RpcException(error ?? new InternalServerErrorException());
         }

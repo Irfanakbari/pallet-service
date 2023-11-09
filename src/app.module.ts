@@ -29,6 +29,7 @@ import {HistoryopEntity} from './historyop/entities/historyop.entity';
 import {PalletDeliveredEntity} from './deliveries/entities/pallet-delivered.entity';
 import {OpnameModule} from './laporan/opname/opname.module';
 import {StockopnameDetailEntity} from './stockopname/entities/stockopname-detail.entity';
+import {RepairsModule} from './repairs/repairs.module';
 
 @Module({
     imports: [
@@ -73,6 +74,7 @@ import {StockopnameDetailEntity} from './stockopname/entities/stockopname-detail
         MaintenanceModule,
         DeliveriesModule,
         OpnameModule,
+        RepairsModule,
     ],
     controllers: [],
     providers: [],
