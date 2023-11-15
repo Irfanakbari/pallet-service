@@ -30,9 +30,40 @@ import {PalletDeliveredEntity} from './deliveries/entities/pallet-delivered.enti
 import {OpnameModule} from './laporan/opname/opname.module';
 import {StockopnameDetailEntity} from './stockopname/entities/stockopname-detail.entity';
 import {RepairsModule} from './repairs/repairs.module';
+import {ScheduleModule} from '@nestjs/schedule';
+import {CronjobService} from './cronjob/cronjob.service';
+import {MailerModule} from '@nestjs-modules/mailer';
+import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import {RawModule} from './ansei/raw/raw.module';
+import * as process from "process";
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+        }),
+        MailerModule.forRoot({
+            transport: {
+                host: process.env.SMTP_HOST,
+                port: process.env.SMTP_PORT,
+                secure: false,
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASSWORD,
+                },
+            },
+            defaults: {
+                from: 'noreply@vuteq.co.id',
+            },
+            template: {
+                dir: __dirname + '/cronjob/',
+                adapter: new HandlebarsAdapter(),
+                options: {
+                    strict: true,
+                },
+            },
+        }),
+        ScheduleModule.forRoot(),
         SequelizeModule.forRoot({
             dialect: 'mysql',
             host: 'localhost',
@@ -57,9 +88,6 @@ import {RepairsModule} from './repairs/repairs.module';
             ],
         }),
         SequelizeTransactionalModule.register(),
-        ConfigModule.forRoot({
-            isGlobal: true,
-        }),
         CustomerModule,
         DestinationModule,
         DepartmentModule,
@@ -75,9 +103,10 @@ import {RepairsModule} from './repairs/repairs.module';
         DeliveriesModule,
         OpnameModule,
         RepairsModule,
+        RawModule,
     ],
     controllers: [],
-    providers: [],
+    providers: [CronjobService],
 })
 export class AppModule {
 }

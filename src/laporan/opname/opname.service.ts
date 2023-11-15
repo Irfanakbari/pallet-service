@@ -27,7 +27,7 @@ export class OpnameService {
 
     async findAll() {
         const stokOpname = await this.soRepo.findAll();
-
+        let datas: any[] = [];
         await Promise.all(
             stokOpname.map(async (so) => {
                 const detailSo = await this.soDetail.findAll({
@@ -83,13 +83,14 @@ export class OpnameService {
                         sequelize.col('partEntity.vehicleEntity.department'),
                         sequelize.col('partEntity.name'),
                     ],
+                    raw: true,
                 });
 
                 const stokSistemMapByDepartmentAndPart =
-                    stokSistemByDepartmentAndPart.reduce((map, item) => {
-                        const department: any = item.get('department');
-                        const part = item.get('part');
-                        const totalStokSistem = item.get('total_stok_sistem');
+                    stokSistemByDepartmentAndPart.reduce((map, item: any) => {
+                        const department: any = item.department;
+                        const part = item.part;
+                        const totalStokSistem = item.total_stok_sistem;
 
                         map[department] = map[department] || {};
                         map[department][part] =
@@ -168,7 +169,7 @@ export class OpnameService {
                     },
                 );
 
-                return {
+                datas.push({
                     id_so: so.kode,
                     catatan: so.catatan,
                     tanggal_mulai: so.tanggal_so,
@@ -177,9 +178,10 @@ export class OpnameService {
                     sudah_dihitung: detailSo.length,
                     belum_dihitung: (await this.palletRepo.count()) - detailSo.length,
                     data: transformedData,
-                };
+                });
             }),
         );
+        return datas;
     }
 
     findOne(id: number) {

@@ -19,6 +19,11 @@ export class DestinationController {
         return this.destinationService.findAll();
     }
 
+    @MessagePattern('findOneDestination')
+    findOne(kode: string) {
+        return this.destinationService.findOne(kode);
+    }
+
     @MessagePattern('removeDestination')
     remove(id: string) {
         return this.destinationService.remove(id);

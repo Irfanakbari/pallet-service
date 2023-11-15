@@ -5,12 +5,15 @@ import {RpcException} from '@nestjs/microservices';
 import {InjectModel} from '@nestjs/sequelize';
 import {UpdateDestinationDto} from './dto/update-destination.dto';
 import {PartEntity} from '../part/entities/part.entity';
+import {PalletEntity} from "../pallet/entities/pallet.entity";
 
 @Injectable()
 export class DestinationService {
     constructor(
         @InjectModel(DestinationEntity)
         private destinationRepo: typeof DestinationEntity,
+        @InjectModel(PalletEntity)
+        private palletRepo: typeof PalletEntity,
     ) {
     }
 
@@ -58,5 +61,15 @@ export class DestinationService {
         } catch (error) {
             throw new RpcException(error ?? new InternalServerErrorException());
         }
+    }
+
+    async findOne(kode: string) {
+        const pallet = await this.palletRepo.findByPk(kode)
+        return this.destinationRepo.findAll({
+            where: {
+                part: pallet.part
+            },
+            include: [PartEntity],
+        });
     }
 }
