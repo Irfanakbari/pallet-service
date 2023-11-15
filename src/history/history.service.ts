@@ -65,6 +65,9 @@ export class HistoryService {
                 operator: operator,
             });
 
+            return {
+                message: "Scan Sukses"
+            }
             // return this.palletDeliveryEntity.create({
             //     history_kode: history.id,
             //     delivery_kode: delivery_kode,

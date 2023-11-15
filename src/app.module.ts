@@ -34,7 +34,6 @@ import {ScheduleModule} from '@nestjs/schedule';
 import {CronjobService} from './cronjob/cronjob.service';
 import {MailerModule} from '@nestjs-modules/mailer';
 import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
-import {RawModule} from './ansei/raw/raw.module';
 import * as process from "process";
 
 @Module({
@@ -103,7 +102,6 @@ import * as process from "process";
         DeliveriesModule,
         OpnameModule,
         RepairsModule,
-        RawModule,
     ],
     controllers: [],
     providers: [CronjobService],
