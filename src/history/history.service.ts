@@ -292,12 +292,10 @@ export class HistoryService {
                 where: {kode: kode},
             });
             if (pallet.status === 1) {
-                return new RpcException(new BadRequestException('Pallet Sudah Masuk'));
+                throw new BadRequestException('Pallet Sudah Masuk');
             }
             if (pallet.status === 3) {
-                return new RpcException(
-                    new BadRequestException('Pallet Sedang Dalam Status Maintenance'),
-                );
+                throw new BadRequestException('Pallet Sedang Dalam Status Maintenance');
             }
             const currentHistory = await this.historyRepo.findOne({
                 where: {
